@@ -1,5 +1,4 @@
 "use client";
-import { Resend } from "resend";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -23,10 +22,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import validator from "validator";
 
 const formSchema = z.object({
-  email: z.string(),
-  phoneNumber: z.string(),
+  email: z.string().email(),
+  phoneNumber: z
+    .string()
+    .min(10, {
+      message: "El número de teléfono debe tener al menos 10 dígitos",
+    })
+    .max(10, {
+      message: "El número de teléfono debe tener máximo 10 dígitos",
+    })
+    .refine(validator.isMobilePhone, {
+      message: "El número de teléfono no es válido",
+    }),
   amount: z.string(),
 });
 
@@ -79,7 +89,7 @@ export default function MyForm() {
           )}
         />
 
-        <FormField
+        {/* <FormField
           control={form.control}
           name="phoneNumber"
           render={({ field }) => (
@@ -91,6 +101,21 @@ export default function MyForm() {
                   {...field}
                   defaultCountry="MX"
                 />
+              </FormControl>
+              <FormDescription>Ingresa tu número de teléfono.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        /> */}
+
+        <FormField
+          control={form.control}
+          name="phoneNumber"
+          render={({ field }) => (
+            <FormItem className="flex flex-col items-start">
+              <FormLabel>Número de teléfono</FormLabel>
+              <FormControl className="w-full">
+                <Input placeholder="(123)-456-7890" {...field} />
               </FormControl>
               <FormDescription>Ingresa tu número de teléfono.</FormDescription>
               <FormMessage />
