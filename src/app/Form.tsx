@@ -43,11 +43,14 @@ export default function MyForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       console.log(values);
-      toast("Success");
+      // ADD API POST FOR DATA BASE
       const response = await fetch("/api/send", {
         method: "POST",
         body: JSON.stringify(values),
       });
+      if (response.status === 200) {
+        toast("Recarga realizada correctamente");
+      }
       console.log(await response.json());
     } catch (error) {
       console.error("Form submission error", error);
