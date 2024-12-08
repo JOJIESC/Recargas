@@ -33,8 +33,8 @@ export default function RecargaForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       phoneNumber: "",
-      amount: "20",
-      providerId: "1", // Por defecto, seleccionamos el primer proveedor.
+      amount: undefined,
+      providerId: undefined,
     },
   });
 
@@ -43,11 +43,11 @@ export default function RecargaForm() {
       console.log("Enviando datos:", data);
 
       const response = await fetch("/api/recargas", {
-        method: "POST", // Cambiar a POST
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data), // Incluir el cuerpo de la solicitud
+        body: JSON.stringify(data),
       });
 
       if (!response.ok) {
@@ -56,15 +56,9 @@ export default function RecargaForm() {
         return;
       }
 
-      // Verifica si la respuesta tiene un cuerpo válido
-      let result;
-      try {
-        result = await response.json();
-        console.log("Respuesta del servidor:", result);
-      } catch (jsonError) {
-        console.warn("No se pudo analizar la respuesta como JSON");
-        result = null;
-      }
+      const result = await response.json();
+      console.log("Respuesta del servidor:", result);
+      toast.success("Recarga realizada con éxito");
     } catch (error: unknown) {
       console.error("Error al enviar datos:", error);
       toast.error("Error al conectar con el servidor");
@@ -80,7 +74,7 @@ export default function RecargaForm() {
             <FormItem>
               <FormLabel>Número de teléfono</FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input {...field} placeholder="Ingresa el número de teléfono" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -92,7 +86,7 @@ export default function RecargaForm() {
             <FormItem>
               <FormLabel>Monto</FormLabel>
               <FormControl>
-                <Select {...field}>
+                <Select value={field.value} onValueChange={field.onChange}>
                   <SelectTrigger>
                     <SelectValue placeholder="Selecciona un monto" />
                   </SelectTrigger>
@@ -115,7 +109,7 @@ export default function RecargaForm() {
             <FormItem>
               <FormLabel>Proveedor</FormLabel>
               <FormControl>
-                <Select {...field}>
+                <Select value={field.value} onValueChange={field.onChange}>
                   <SelectTrigger>
                     <SelectValue placeholder="Selecciona un proveedor" />
                   </SelectTrigger>
@@ -130,7 +124,12 @@ export default function RecargaForm() {
             </FormItem>
           )}
         />
-        <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Enviar</button>
+        <button
+          type="submit"
+          className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 mt-8 mx-auto block"
+        >
+          Enviar
+        </button>
       </form>
     </Form>
   );
