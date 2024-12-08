@@ -1,9 +1,9 @@
 "use client";
+
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -14,7 +14,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { PhoneInput } from "@/components/ui/phone-input";
 import {
   Select,
   SelectContent,
@@ -22,133 +21,116 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import validator from "validator";
 
 const formSchema = z.object({
-  email: z.string().email(),
-  phoneNumber: z
-    .string()
-    .min(10, {
-      message: "El número de teléfono debe tener al menos 10 dígitos",
-    })
-    .max(10, {
-      message: "El número de teléfono debe tener máximo 10 dígitos",
-    })
-    .refine(validator.isMobilePhone, {
-      message: "El número de teléfono no es válido",
-    }),
-  amount: z.string(),
+  phoneNumber: z.string().min(10, "Debe tener al menos 10 dígitos"),
+  amount: z.enum(["20", "30", "50", "100", "200"]),
+  providerId: z.enum(["1", "2", "3"]),
 });
 
-export default function MyForm() {
+export default function RecargaForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
       phoneNumber: "",
-      amount: "",
+      amount: "20",
+      providerId: "1", // Por defecto, seleccionamos el primer proveedor.
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(data: z.infer<typeof formSchema>) {
     try {
-      console.log(values);
-      // ADD API POST FOR DATA BASE
-      const response = await fetch("/api/send", {
-        method: "POST",
-        body: JSON.stringify(values),
+      console.log("Enviando datos:", data);
+
+      const response = await fetch("/api/recargas", {
+        method: "POST", // Cambiar a POST
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data), // Incluir el cuerpo de la solicitud
       });
-      if (response.status === 200) {
-        toast("Recarga realizada correctamente");
+
+      if (!response.ok) {
+        console.error("Error en la respuesta del servidor:", response.statusText);
+        toast.error("Error en el servidor: " + response.statusText);
+        return;
       }
-      console.log(await response.json());
-    } catch (error) {
-      console.error("Form submission error", error);
-      toast("Error");
+
+      // Verifica si la respuesta tiene un cuerpo válido
+      let result;
+      try {
+        result = await response.json();
+        console.log("Respuesta del servidor:", result);
+      } catch (jsonError) {
+        console.warn("No se pudo analizar la respuesta como JSON");
+        result = null;
+      }
+    } catch (error: unknown) {
+      console.error("Error al enviar datos:", error);
+      toast.error("Error al conectar con el servidor");
     }
   }
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-8 max-w-3xl mx-auto py-10"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)}>
         <FormField
-          control={form.control}
-          name="email"
+          name="phoneNumber"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Correo electrónico</FormLabel>
+              <FormLabel>Número de teléfono</FormLabel>
               <FormControl>
-                <Input placeholder="me@domain.com" type="email" {...field} />
+                <Input {...field} />
               </FormControl>
-              <FormDescription>Ingresa tu correo electrónico.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-
-        {/* <FormField
-          control={form.control}
-          name="phoneNumber"
-          render={({ field }) => (
-            <FormItem className="flex flex-col items-start">
-              <FormLabel>Número de teléfono</FormLabel>
-              <FormControl className="w-full">
-                <PhoneInput
-                  placeholder="(123)-456-7890"
-                  {...field}
-                  defaultCountry="MX"
-                />
-              </FormControl>
-              <FormDescription>Ingresa tu número de teléfono.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        /> */}
-
         <FormField
-          control={form.control}
-          name="phoneNumber"
-          render={({ field }) => (
-            <FormItem className="flex flex-col items-start">
-              <FormLabel>Número de teléfono</FormLabel>
-              <FormControl className="w-full">
-                <Input placeholder="(123)-456-7890" {...field} />
-              </FormControl>
-              <FormDescription>Ingresa tu número de teléfono.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
           name="amount"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Monto</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
+              <FormControl>
+                <Select {...field}>
                   <SelectTrigger>
-                    <SelectValue placeholder="$100.00" />
+                    <SelectValue placeholder="Selecciona un monto" />
                   </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="20">$20.00</SelectItem>
-                  <SelectItem value="30">$30.00</SelectItem>
-                  <SelectItem value="50">$50.00</SelectItem>
-                  <SelectItem value="100">$100.00</SelectItem>
-                  <SelectItem value="200">$200.00</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormDescription>Ingresa el monto de tu recarga.</FormDescription>
+                  <SelectContent>
+                    <SelectItem value="20">20</SelectItem>
+                    <SelectItem value="30">30</SelectItem>
+                    <SelectItem value="50">50</SelectItem>
+                    <SelectItem value="100">100</SelectItem>
+                    <SelectItem value="200">200</SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <FormField
+          name="providerId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Proveedor</FormLabel>
+              <FormControl>
+                <Select {...field}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecciona un proveedor" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1">Bait</SelectItem>
+                    <SelectItem value="2">Telcel</SelectItem>
+                    <SelectItem value="3">Movistar</SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Enviar</button>
       </form>
     </Form>
   );

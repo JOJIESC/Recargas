@@ -30,6 +30,7 @@
     "react-hook-form": "^7.53.2",
     "react-phone-number-input": "^3.4.10",
     "resend": "^4.0.1",
+    "serverless-mysql": "^1.5.5",
     "sonner": "^1.7.0",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",
