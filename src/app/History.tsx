@@ -1,6 +1,6 @@
 "use client";
 
-import Table from "@/components/Table";
+import Table from "../components/Table";
 import { useState, useEffect } from "react";
 
 export default function History() {
