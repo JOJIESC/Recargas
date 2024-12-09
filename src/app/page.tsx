@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import MyForm from "@/app/Form";
-import { ModeToggle } from "@/components/ModeToggle";
+import Commissions from "./Commissions";
+import History from "./History";
 import Image from "next/image";
 
 export default function Home() {
@@ -20,21 +21,17 @@ export default function Home() {
       case "comisiones":
         return (
           <div className="flex flex-col justify-center items-center mt-8">
-            <h1 className="text-4xl font-semibold mb-6">Comisiones</h1>
-            <p className="text-gray-400">
-              Aquí se mostrará la tabla de comisiones.
-            </p>
+
+            <h1 className="text-4xl font-semibold mb-6 text-gray-200">Comisiones</h1>
+            <Commissions />
+
           </div>
         );
       case "historial":
         return (
           <div className="flex flex-col justify-center items-center mt-8">
-            <h1 className="text-4xl font-semibold mb-6">
-              Historial de Recargas
-            </h1>
-            <p className="text-gray-400">
-              Aquí se mostrará el historial de recargas.
-            </p>
+            <h1 className="text-4xl font-semibold mb-6 text-gray-200">Historial de Recargas</h1>
+            <History />
           </div>
         );
       default:
@@ -58,7 +55,6 @@ export default function Home() {
             <option value="historial">Historial de Recargas</option>
           </select>
         </div>
-        <ModeToggle />
       </div>
       <div className="p-10">{renderView()}</div>
     </div>
