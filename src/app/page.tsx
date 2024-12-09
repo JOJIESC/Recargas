@@ -14,15 +14,17 @@ export default function Home() {
       case "recargas":
         return (
           <div className="flex flex-col justify-center items-center mt-8">
-            <h1 className="text-4xl font-semibold mb-6 text-gray-200">Recargas</h1>
+            <h1 className="text-4xl font-semibold mb-6 ">Recargas</h1>
             <MyForm />
           </div>
         );
       case "comisiones":
         return (
           <div className="flex flex-col justify-center items-center mt-8">
+
             <h1 className="text-4xl font-semibold mb-6 text-gray-200">Comisiones</h1>
             <Commissions />
+
           </div>
         );
       case "historial":
@@ -38,13 +40,13 @@ export default function Home() {
   };
 
   return (
-    <div className="w-dvw h-dvh bg-gray-900">
-      <div className="flex justify-between p-5 bg-gray-800 text-gray-100 shadow-lg">
+    <div className="w-dvw h-dvh ">
+      <div className="flex justify-between p-5 shadow-lg">
         <div className="flex items-center gap-4">
           <Image src="/logo.png" alt="logo" width={40} height={40} />
           <h1 className="text-2xl font-bold">MiniSuper</h1>
           <select
-            className="ml-5 bg-gray-700 text-gray-200 px-3 py-2 rounded shadow focus:outline-none"
+            className="ml-5 px-3 py-2 rounded shadow focus:outline-none"
             value={selectedView}
             onChange={(e) => setSelectedView(e.target.value)}
           >

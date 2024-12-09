@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 const formSchema = z.object({
   phoneNumber: z.string().min(10, "Debe tener al menos 10 dígitos"),
@@ -42,7 +43,7 @@ export default function RecargaForm() {
     try {
       console.log("Enviando datos:", data);
 
-      const response = await fetch("/api/recargas", {
+      const response = await fetch("http://localhost:3001/recargas", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -51,7 +52,10 @@ export default function RecargaForm() {
       });
 
       if (!response.ok) {
-        console.error("Error en la respuesta del servidor:", response.statusText);
+        console.error(
+          "Error en la respuesta del servidor:",
+          response.statusText
+        );
         toast.error("Error en el servidor: " + response.statusText);
         return;
       }
@@ -124,12 +128,9 @@ export default function RecargaForm() {
             </FormItem>
           )}
         />
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 mt-8 mx-auto block"
-        >
-          Enviar
-        </button>
+        <div className="flex justify-center mt-10">
+          <Button type="submit">Enviar</Button>
+        </div>
       </form>
     </Form>
   );
