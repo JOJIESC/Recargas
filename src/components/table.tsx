@@ -70,7 +70,7 @@ export default function Table<TData>({ data, columns }: TableProps<TData>) {
         </tbody>
       </table>
 
-      {/* Controles de paginación */}
+      {/* Controles de paginación de las tablas */}
       <div className="flex justify-between items-center mt-4">
         <button
           className="bg-gray-700 px-4 py-2 rounded text-gray-300 disabled:opacity-50"
